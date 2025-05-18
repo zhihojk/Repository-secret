@@ -1,8 +1,0 @@
-torch
-torchaudio
-transformers
-gradio
-scipy
-einops
-tqdm
-tortoise-tts @ git+https://github.com/neonbjb/tortoise-tts.git
