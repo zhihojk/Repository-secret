@@ -1,0 +1,563 @@
+
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouTube 导航播放站</title>
+    <meta name="description" content="一个简洁实用的 YouTube 播放清单导航网站，快速直达精彩视频。">
+    <meta name="keywords" content="YouTube, 播放清单, 视频导航, 视频推荐">
+    <meta name="author" content="YouTube导航播放站">
+    <meta property="og:title" content="YouTube 导航播放站" />
+    <meta property="og:description" content="快速访问你喜爱的 YouTube 播放清单！" />
+    <meta property="og:image" content="/og-preview.jpg" />
+    <meta property="og:url" content="https://your-vercel-site.vercel.app" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <h1>🎬 欢迎来到 YouTube 导航播放站</h1>
+    <p>这里可以导航到各类 YouTube 播放清单！</p>
+  </body>
+</html>
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>YouTube 播放列表导航</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: sans-serif;
+            background: #f9f9f9;
+            margin: 0;
+            padding: 10px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        h2 {
+            margin-top: 20px;
+            color: #333;
+        }
+
+       .search-box {
+            width: 100%;
+            margin: 10px 0;
+            display: flex;
+            gap: 10px;
+        }
+
+       .search-box input {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+       .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+       .card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: 0.2s ease;
+            position: relative;
+        }
+
+       .card:hover {
+            transform: translateY(-4px);
+        }
+
+       .card img {
+            width: 100%;
+            border-radius: 7.5px;
+            margin-bottom: 10px;
+        }
+
+       .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+       .card-category {
+            font-size: 14px;
+            color: #777;
+        }
+
+       .card-buttons {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+       .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+       .btn.copy {
+            background-color: #28a745;
+        }
+
+       .btn:first-child {
+            background-color: #007bff;
+            color: white;
+        }
+
+        @media (min-width: 600px) {
+           .card-buttons {
+                flex-direction: row;
+            }
+        }
+
+       .access-tip {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            font-size: 12px;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="search-box">
+        <input type="text" id="search" placeholder="🔍 搜索标题或分类...">
+    </div>
+
+    <div class="grid" id="playlist-container">
+        <!-- Cards will be inserted here -->
+    </div>
+
+    <script>
+        // 原有时装类数据
+        const fashionPlaylists = [
+            {
+                category: "🎬财经类",
+                title: "曹仁超合集",
+                url: "https://www.youtube.com/playlist?list=PLq2EJ_Syj59GlrkCOhOcNy_CnK9bFWPkw"
+            },
+            {
+                category: "🎬 财经类",
+                title: "安东尼・雷克网络研讨会",
+                url: "https://www.youtube.com/playlist?list=PLq2EJ_Syj59HT7LapSwiKobILLaM6SJa3"
+            },
+            {
+                category: "🎬 时装类",
+                title: "韩系夏季女装",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn2ohJhEnek_eQUKU-Ro70uS"
+            },
+            {
+                category: "时装类",
+                title: "韩系夏季女装",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn1tolbNpCAd92RbAnbbIcKq"
+            },
+            {
+                category: "时装",
+                title: "时装模特",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn1AHr5CkHoJoP7GINVO78p7"
+            },
+            {
+                category: "🎬 时装类",
+                title: "韩系夏季高跟鞋",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn2ohJhEnek_eQUKU-Ro70uS"
+            },
+            {
+                category: "🎬 时装类",
+                title: "韩系女装百搭",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn0imBbr8iDu8sP-9gbk1KEo"
+            },
+            {
+                category: "🎬 时装类",
+                title: "韩系啦啦队服装",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn28pzTFGo6t0ND9W7hEkiwx"
+            },
+            {
+                category: "时装类",
+                title: "韩系车展服饰",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn0uNuZGySF-FXT7FPq_zqso"
+            },
+            {
+                category: "时装类",
+                title: "法系春季女装",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn3Kxuvje8DISQyvWEhAUTgg"
+            },
+            {
+                category: "时装",
+                title: "韩系车模",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn0EtPNZ5OaKUjxTP0e7Qct4"
+            },
+            {
+                category: "时装",
+                title: "韩系拉拉对运动",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn3fk0g9B4kCJpvtv53YHl8O"
+            },
+            {
+                category: "🎬 时装类",
+                title: "韩系夏季跳舞装",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn0P8a5AoTtKCATbSryuQUL0"
+            },
+            {
+                category: "🎬 时装类",
+                title: "韩系甜美风少女穿搭口罩",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn2ZxvYgk_GYC9mlUlS4E4yD"
+            },
+            {
+                category: "时装类",
+                title: "韩系夏季泳装",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn1UuBtYu9j9r8XBp4drwPaE"
+            },
+            {
+                category: "🎬 时装类",
+                title: "韩系少女内衣",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn3O8dRai0MQZ67NGqM7w2zY"
+            },
+            {
+                category: "🎬 时装类",
+                title: "日系穿搭秋冬",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn21kUTKLqbZ3dRhCC-pnkEd"
+            },
+            {
+                category: "🎬 时装类",
+                title: "日系女生穿搭",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn20DMZaa8yjJjKzrN_C5ge-"
+            },
+            {
+                category: "时装类",
+                title: "穿搭&網拍評比",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn1US1YhD7BYAPsGOK4-G3Ws"
+            },
+            {
+                category: "时装类",
+                title: "休闲服饰推荐精品女裝",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn2DIzqnhIYRk0oee-tmQ666"
+            },
+            {
+                category: "时装",
+                title: "穿搭日記",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn2FYX5eMEFoKMFzY72r1gz-"
+            },
+            {
+                category: "时装",
+                title: "穿搭分享看這邊搭配",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn1F4bithSBE2Sh0GbmkdT8o"
+            },
+            {
+                category: "🎬 时装类",
+                title: "男装穿搭分享",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn3sJKocDLPUKdFuhnUI0JRB"
+            },
+            {
+                category: "🎬 时装类",
+                title: "教你當正宗韓妞少女穿搭",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn3B3SkuEn9meyqYm5O4TVhd"
+            },
+            {
+                category: "时装类",
+                title: "韩系男装",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn0MOSnK-2Txa1yry_CZnQ8Z"
+            },
+            {
+                category: "🎬时装类",
+                title: "閨蜜穿搭分享",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn1gbaZJY7v3pBAVGBbGD_tz"
+            },
+            {
+                category: "🎬 时装类",
+                title: "情侣穿搭",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn2_P-SW3Z5ZhEdukO2nmrZp"
+            },
+            {
+                category: "🎬 时装类",
+                title: "男装穿搭",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn2xfEYbt_OQ4ASuLDgSn6bz"
+            },
+            {
+                category: "时装类",
+                title: "衣服混搭",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn06lBQaE0oQjquDzqF9vDiU"
+            },
+            {
+                category: "时装",
+                title: "韩系少女冬装",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn1v6_8FRkeeNLWP6H9rYbiG"
+            },
+            {
+                category: "🎬 时装类",
+                title: "少女穿搭合辑",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn33SpFlQgwlJGCLpVb5Odib"
+            },
+            {
+                category: "🎬 时装类",
+                title: "法式少女穿搭",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn2vmQAochyry-_RQ8XR76Dn"
+            },
+            {
+                category: "🎬 时装类",
+                title: "關於穿搭的一切",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn3POGaeRhqkDpYbppcLmdpu"
+            },
+            {
+                category: "时装类",
+                title: "服装设计欣赏",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn1fDOOf4Q7Ro-E1HruoDSJa"
+            },
+            {
+                category: "时装类",
+                title: "潮流风服饰搭配",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn2yag4jUW7UBXy01vKrUL9p"
+            },
+            {
+                category: "时装",
+                title: "穿搭必學的第一件事",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn2o4mOKp-ti6Bc9w-aNLtgS"
+            },
+            {
+                category: "时装",
+                title: "中国系女穿搭",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn2xzO_V2INy0aC9Hv91msg1"
+            },
+            {
+                category: "🎬 时装类",
+                title: "韩系少女啦啦队装",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn1rkkSG7MHjaF1LQN2M7Ccm"
+            },
+            {
+                category: "🎬 时装类",
+                title: "泰系内衣装",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn24OjUIWkJU97AlCFgzq566"
+            },
+            {
+                category: "时装类",
+                title: "泰系泳装百万以上观看",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn1PSq8PphPFLzDBsQj6agnG"
+            },
+            {
+                category: "🎬 时装类",
+                title: "泰系女泳装",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn1WFUc1c6BOpmq42mU3OI4_"
+            },
+            {
+                category: "🎬 时装类",
+                title: "泰系一款泳装及泳池穿搭",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn01DTD0F95d4d-RdzjnNwYA"
+            }
+        ];
+
+        // 新的美妆类数据
+        const beautyPlaylists = [
+            {
+                category: "时装类",
+                title: "泰系比基尼泳装",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn2GP2wnlEnXfat0K8cXz65D"
+            },
+            {
+                category: "时装类",
+                title: "泰系时尚",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn3KjQds3luXP78EN9W2yIyE"
+            },
+            {
+                category: "时装类",
+                title: "少女孩泳装度假",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn0OXffSB_GVqdN3BX6gFKCx"
+            },
+            {
+                category: "时装类",
+                title: "穿搭/矮個女必看",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn291RIOSUl9MEwX3sxQVdzY"
+            },
+            {
+                category: "时装类",
+                title: "矮個必看！增高穿搭",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn1Z37jTIn6ip191cnPr1jlu"
+            },
+            {
+                category: "时装类",
+                title: "時尚男分享",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn2E0LreDMh1Lkxv5TffEWeu"
+            },
+            {
+                category: "时装类",
+                title: "矮个穿搭分享",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn2gCPauHkwmxJFKvMCvooh1"
+            },
+            {
+                category: "时装类",
+                title: "初春穿搭",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn3BkgZaVDTUJhwuNGZXpNx4"
+            },
+            {
+                category: "时装类",
+                title: "穿搭影片",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn0OhXyQeyYE58sX3a0HEp_b"
+            },
+            {
+                category: "时装类",
+                title: "如何更帅气地穿西装",
+                url: "https://www.youtube.com/playlist?list=PLabcdef1234567890" // 这里的URL可能无效
+            },
+            {
+                category: "时装类",
+                title: "穿搭大法",
+                url: "https://www.youtube.com/playlist?list=PLghijklmnopqrstuvw" // 这里的URL可能无效
+            },
+            {
+                category: "时装类",
+                title: "平胸女孩專屬！穿搭",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn3ig4ZvSxBmmn1JPMMny0kt"
+            },
+            {
+                category: "时装类",
+                title: "穿搭风格干货",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn1BIZ3POYR0lItTSc97MVQz"
+            },
+            {
+                category: "时装类",
+                title: "季节穿搭分享",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn3UuIdJTf0H8d6Xd1zfCLvO"
+            },
+            {
+                category: "时装类",
+                title: "如何挑选",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn2ipux2QL1Rsf3bEoLfvobw"
+            },
+            {
+                category: "时装类",
+                title: "穿搭灵感",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn1kg8bzp7uSpddWjBLjdVQV"
+            },
+            {
+                category: "时装类",
+                title: "我穿的衣服",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn2J8DBSHTwadhiMM2CYLhcz"
+            },
+            {
+                category: "时装类",
+                title: "各種風格穿搭特輯",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn32XgaXjTTZtfD1oK5wVeq3"
+            },
+            {
+                category: "时装类",
+                title: "重複穿搭特輯",
+                url: "https://www.youtube.com/playlist?list=PL567890abcdefghijk" // 这里的URL可能无效
+            },
+            {
+                category: "时装类",
+                title: "美妆摄影技巧分享",
+                url: "https://www.youtube.com/playlist?list=PLklmnopqrstuvwxyza" // 这里的URL可能无效
+            },
+            {
+                category: "时装类",
+                title: "羊绒紧身裤",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn0ihKaNquIPDFqwMLzF8z38"
+            },
+            {
+                category: "时装类",
+                title: "购衣体验与评价",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn2rdpkD8JPqiYJTLVSwwghH"
+            },
+            {
+                category: "时装类",
+                title: "时尚与风格穿搭",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn0Q2VbBRYCzExVQK5NFFVDl"
+            },
+            {
+                category: "时装类",
+                title: "168/58穿搭",
+                url: "https://www.youtube.com/playlist?list=PL6OkvGimqGn0BJObnChANZ_l9_0xYDNFJ"
+            }
+        ];
+
+        // 合并两个数组
+        const playlists = [...fashionPlaylists, ...beautyPlaylists];
+
+        const container = document.getElementById("playlist-container");
+        const defaultThumbnail = "https://via.placeholder.com/300";
+
+        try {
+            playlists.forEach(p => {
+                let thumb = defaultThumbnail;
+                try {
+                    const listParam = new URLSearchParams(p.url.split('?')[1]);
+                    const listId = listParam.get('list');
+                    if (listId) {
+                        thumb = `https://i.ytimg.com/vi/${listId}/hqdefault.jpg`;
+                    }
+                } catch (error) {
+                    console.error(`解析链接 ${p.url} 时出错:`, error);
+                }
+
+                const card = document.createElement("div");
+                card.className = "card";
+                // 添加访问提示信息
+                const accessTip = "该链接为境外网页，可能无法直接访问，请自行确认网络环境。";
+                card.innerHTML = `
+                    <img src="${thumb}" onerror="this.src='${defaultThumbnail}'; this.style.display='block';">
+                    <div class="card-category">${p.category}</div>
+                    <div class="card-title">${p.title}</div>
+                    <div class="card-buttons">
+                        <a href="${p.url}" target="_blank" class="btn" title="${accessTip}">▶️ 打开</a>
+                        <button class="btn copy" data-url="${p.url}" title="${accessTip}">📎 复制地址</button>
+                    </div>
+                    <div class="access-tip">${accessTip}</div>
+                `;
+                container.appendChild(card);
+            });
+        } catch (error) {
+            console.error('生成卡片时出错:', error);
+        }
+
+        document.getElementById("search").addEventListener("input", function (e) {
+            const keyword = e.target.value.toLowerCase();
+            document.querySelectorAll(".card").forEach(card => {
+                const text = card.innerText.toLowerCase();
+                card.style.display = text.includes(keyword)? "block" : "none";
+            });
+        });
+
+        document.addEventListener("click", function (e) {
+            if (e.target.classList.contains("copy")) {
+                const url = e.target.getAttribute("data-url");
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(url).then(() => {
+                        e.target.innerText = "✅ 已复制";
+                        setTimeout(() => { e.target.innerText = "📎 复制地址"; }, 1500);
+                    }).catch(err => {
+                        console.error('复制失败:', err);
+                        e.target.innerText = "❌ 复制失败";
+                        setTimeout(() => { e.target.innerText = "📎 复制地址"; }, 1500);
+                    });
+                } else {
+                    console.error('浏览器不支持clipboard API');
+                    e.target.innerText = "❌ 不支持复制";
+                    setTimeout(() => { e.target.innerText = "📎 复制地址"; }, 1500);
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>    
+
+<p>📧 <a href="mailto:jinfenghe85@gmail.com">广告合作联系我</a></p>
