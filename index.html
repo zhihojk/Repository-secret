@@ -1,45 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>广告测试页面</title>
 </head>
-
 <body>
 
-    <!-- 添加新广告脚本（注意协议补全为 https） -->
+    <h1>这是广告测试页面</h1>
+    <p>点击任意地方触发广告弹窗（仅一次）。</p>
+
+    <!-- ✅ Social Bar（右下角弹窗）-->
     <script type='text/javascript' src='https://pl26693365.profitableratecpm.com/24/eb/25/24eb25a40647c102f1343d2a88233374.js'></script>
-    
-    <!-- 原有广告脚本 -->
-    <script type='text/javascript' src='//pl26693318.profitableratecpm.com/a2/fc/c4/a2fcc42db26d62e53e3e394d2e108856.js'></script>
-    
-    <!-- 原有脚本加载监听代码 -->
+
+    <!-- ✅ Popunder（点击一次触发）-->
     <script>
-        const script = document.querySelector('script[src*="invoke.js"]');
-        script.addEventListener('load', () => {
-            console.log('invoke.js 脚本加载成功');
-        });
-        script.addEventListener('error', () => {
-            console.error('invoke.js 脚本加载失败');
+        let popTriggered = false;
+        let popAllowed = false;
+
+        // 延迟5秒允许弹窗
+        setTimeout(() => {
+            popAllowed = true;
+        }, 5000);
+
+        document.addEventListener('click', function () {
+            if (popAllowed && !popTriggered) {
+                popTriggered = true;
+
+                const script = document.createElement('script');
+                script.src = 'https://pl26693318.profitableratecpm.com/a2/fc/c4/a2fcc42db26d62e53e3e394d2e108856.js';
+                script.type = 'text/javascript';
+                document.body.appendChild(script);
+            }
         });
     </script>
 
-    <!-- 使用英文引号并添加具体协议 -->
-    <script type='text/javascript' src='//pl26693318.profitableratecpm.com/a2/fc/c4/a2fcc42db26d62e53e3e394d2e108856.js'></script>
-    <script>
-
-        // 监听脚本加载事件
-        const script = document.querySelector('script[src*="invoke.js"]');
-        script.addEventListener('load', () => {
-            console.log('invoke.js 脚本加载成功');
-        });
-        script.addEventListener('error', () => {
-            console.error('invoke.js 脚本加载失败');
-        });
-    </script>
 </body>
+
 
 </html>
 
